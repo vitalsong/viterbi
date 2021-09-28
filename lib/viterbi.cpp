@@ -3,7 +3,7 @@
 // Author: Min Xu <xukmin@gmail.com>
 // Date: 01/30/2015
 
-#include "viterbi.h"
+#include <viterbi.h>
 
 #include <algorithm>
 #include <cassert>

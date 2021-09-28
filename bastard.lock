@@ -1,0 +1,8 @@
+[package]
+name = viterbi
+cmake = 3.17.3
+bastard = 0.16.3
+
+[dev-dependencies]
+gtest = { git = "https://github.com/google/googletest.git", rev = "47f819c3" }
+

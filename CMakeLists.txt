@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.10)
+include(cmake/bastard_setup.cmake)
+bastard_setup()
+project(${BASTARD_PACKAGE_NAME})
+
+if ("${BASTARD_MAIN_PACKAGE}" STREQUAL "${BASTARD_PACKAGE_NAME}")
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        include(cmake/cmake_sanitizer.cmake)
+        enable_address_sanitizer(TARGET ${BASTARD_PACKAGE_NAME})
+        target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wno-conversion -Wno-implicit-int-conversion)
+    endif()
+endif()
