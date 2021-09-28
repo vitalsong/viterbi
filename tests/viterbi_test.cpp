@@ -25,35 +25,31 @@ static std::string randomMessage(int num_bits) {
 
 TEST(Viterbi, Poly_7x5_err) {
   ViterbiCodec codec(3, {7, 5});
-  ASSERT_EQ(codec.Decode("0011100001100111111000101100111011"),
-            "010111001010001");
+  ASSERT_EQ(codec.Decode("001110000110011111100010110011"), "010111001010001");
 
   // Inject 1 error bit.
-  ASSERT_EQ(codec.Decode("0011100001100111110000101100111011"),
-            "010111001010001");
+  ASSERT_EQ(codec.Decode("001110000110011111000010110011"), "010111001010001");
 }
 
 TEST(Viterbi, Poly_7x6_err) {
   ViterbiCodec codec(3, {7, 6});
-  ASSERT_EQ(codec.Decode("1011010100110000"), "101100");
+  ASSERT_EQ(codec.Decode("101101010011"), "101100");
 }
 
 TEST(Viterbi, Poly_6x5_err) {
   ViterbiCodec codec(3, {6, 5});
-  ASSERT_EQ(codec.Decode("011011011101101011"), "1001101");
+  ASSERT_EQ(codec.Decode("01101101110110"), "1001101");
 
   // Inject 2 error bits.
-  ASSERT_EQ(codec.Decode("111011011100101011"), "1001101");
+  ASSERT_EQ(codec.Decode("11101101110010"), "1001101");
 }
 
 TEST(Viterbi, Poly_91x117x121_err) {
   ViterbiCodec codec(7, {91, 117, 121});
-  ASSERT_EQ(codec.Decode("111100101110001011110101111111001011100111"),
-            "10110111");
+  ASSERT_EQ(codec.Decode("111100101110001011110101"), "10110111");
 
   // Inject 4 error bits.
-  ASSERT_EQ(codec.Decode("100100101110001011110101110111001011100110"),
-            "10110111");
+  ASSERT_EQ(codec.Decode("100100101110001011110101"), "10110111");
 }
 
 TEST(Viterbi, Voyager_err) {
@@ -61,8 +57,9 @@ TEST(Viterbi, Voyager_err) {
   auto message = randomMessage(32);
   auto encoded = codec.Encode(message);
 
-  // add errors
-  for (size_t i = 0; i < 4; i++) {
+  // add 5% errors
+  int nerr = encoded.size() * 0.05;
+  for (size_t i = 0; i < nerr; i++) {
     int idx = rand() % encoded.size();
     encoded[idx] = (encoded[idx] == '0') ? ('1') : ('0');
   }

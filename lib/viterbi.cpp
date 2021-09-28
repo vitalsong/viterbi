@@ -82,12 +82,6 @@ std::string ViterbiCodec::Encode(const std::string& bits) const {
     state = NextState(state, input);
   }
 
-  // Encode (constaint_ - 1) flushing bits.
-  for (int i = 0; i < constraint_ - 1; i++) {
-    encoded += Output(state, 0);
-    state = NextState(state, 0);
-  }
-
   return encoded;
 }
 
@@ -185,8 +179,6 @@ std::string ViterbiCodec::Decode(const std::string& bits) const {
     state = trellis[i][state];
   }
   std::reverse(decoded.begin(), decoded.end());
-
-  // Remove (constraint_ - 1) flushing bits.
-  return decoded.substr(0, decoded.size() - constraint_ + 1);
+  return decoded;
 }
 
