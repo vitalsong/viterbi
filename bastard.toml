@@ -1,6 +1,6 @@
 [package]
 name = "viterbi"
-lang = "c++11"
+lang = "c++17"
 
 [lib]
 lang = "c++98"

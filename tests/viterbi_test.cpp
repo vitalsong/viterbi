@@ -12,44 +12,47 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <bitset>
+
+#include "viterbi-utils.h"
 
 #include <gtest/gtest.h>
 
-static std::string randomMessage(int num_bits) {
-  std::string msg;
+static bitarr_t randomMessage(int num_bits) {
+  bitarr_t msg(num_bits);
   for (int j = 0; j < num_bits; j++) {
-    msg += (std::rand() & 1) + '0';
+    msg[j] = (std::rand() & 0x1);
   }
   return msg;
 }
 
 TEST(Viterbi, Poly_7x5_err) {
   ViterbiCodec codec(3, {7, 5});
-  ASSERT_EQ(codec.Decode("001110000110011111100010110011"), "010111001010001");
+  ASSERT_EQ(codec.Decode("001110000110011111100010110011"_b), "010111001010001"_b);
 
   // Inject 1 error bit.
-  ASSERT_EQ(codec.Decode("001110000110011111000010110011"), "010111001010001");
+  ASSERT_EQ(codec.Decode("001110000110011111000010110011"_b), "010111001010001"_b);
 }
 
 TEST(Viterbi, Poly_7x6_err) {
   ViterbiCodec codec(3, {7, 6});
-  ASSERT_EQ(codec.Decode("101101010011"), "101100");
+  ASSERT_EQ(codec.Decode("101101010011"_b), "101100"_b);
 }
 
 TEST(Viterbi, Poly_6x5_err) {
   ViterbiCodec codec(3, {6, 5});
-  ASSERT_EQ(codec.Decode("01101101110110"), "1001101");
+  ASSERT_EQ(codec.Decode("01101101110110"_b), "1001101"_b);
 
   // Inject 2 error bits.
-  ASSERT_EQ(codec.Decode("11101101110010"), "1001101");
+  ASSERT_EQ(codec.Decode("11101101110010"_b), "1001101"_b);
 }
 
 TEST(Viterbi, Poly_91x117x121_err) {
   ViterbiCodec codec(7, {91, 117, 121});
-  ASSERT_EQ(codec.Decode("111100101110001011110101"), "10110111");
+  ASSERT_EQ(codec.Decode("111100101110001011110101"_b), "10110111"_b);
 
   // Inject 4 error bits.
-  ASSERT_EQ(codec.Decode("100100101110001011110101"), "10110111");
+  ASSERT_EQ(codec.Decode("100100101110001011110101"_b), "10110111"_b);
 }
 
 TEST(Viterbi, Voyager_err) {
@@ -61,7 +64,7 @@ TEST(Viterbi, Voyager_err) {
   int nerr = encoded.size() * 0.05;
   for (size_t i = 0; i < nerr; i++) {
     int idx = rand() % encoded.size();
-    encoded[idx] = (encoded[idx] == '0') ? ('1') : ('0');
+    encoded[idx] = (encoded[idx] == 0) ? (1) : (0);
   }
 
   auto decoded = codec.Decode(encoded);
@@ -74,9 +77,9 @@ TEST(Viterbi, Voyager_err) {
 void TestViterbiCodecAutomatic(const ViterbiCodec &codec) {
   for (int num_bits = 8; num_bits <= 32; num_bits <<= 1) {
     for (int i = 0; i < 10; i++) {
-      std::string message = randomMessage(num_bits);
-      std::string encoded = codec.Encode(message);
-      std::string decoded = codec.Decode(encoded);
+      auto message = randomMessage(num_bits);
+      auto encoded = codec.Encode(message);
+      auto decoded = codec.Decode(encoded);
       ASSERT_EQ(decoded, message);
     }
   }

@@ -4,6 +4,7 @@
 // Date: 01/30/2015
 
 #include "viterbi.h"
+#include "viterbi-utils.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -129,9 +130,9 @@ void ViterbiMain(const std::vector<std::string>& args) {
   ViterbiCodec codec(constraint, polynomials);
 
   if (FLAGS_encode) {
-    std::cout << codec.Encode(bits) << std::endl;
+    std::cout << bits_to_string(codec.Encode(string_to_bits(bits))) << std::endl;
   } else {
-    std::cout << codec.Decode(bits) << std::endl;
+    std::cout << bits_to_string(codec.Decode(string_to_bits(bits))) << std::endl;
   }
 }
 

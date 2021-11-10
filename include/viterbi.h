@@ -3,13 +3,12 @@
 // Author: Min Xu <xukmin@gmail.com>
 // Date: 01/30/2015
 
-#ifndef VITERBI_H_
-#define VITERBI_H_
+#pragma once
 
-#include <ostream>
-#include <string>
 #include <utility>
 #include <vector>
+
+using bitarr_t = std::vector<bool>;
 
 // This class implements both a Viterbi Decoder and a Convolutional Encoder.
 class ViterbiCodec {
@@ -34,9 +33,9 @@ class ViterbiCodec {
   // We use 2.
   ViterbiCodec(int constraint, const std::vector<int>& polynomials);
 
-  std::string Encode(const std::string& bits) const;
+  bitarr_t Encode(const bitarr_t& bits) const;
 
-  std::string Decode(const std::string& bits) const;
+  bitarr_t Decode(const bitarr_t& bits) const;
 
   int constraint() const { return constraint_; }
 
@@ -58,21 +57,21 @@ class ViterbiCodec {
 
   int NextState(int current_state, int input) const;
 
-  std::string Output(int current_state, int input) const;
+  bitarr_t Output(int current_state, int input) const;
 
-  int BranchMetric(const std::string& bits,
+  int BranchMetric(const bitarr_t& bits,
                    int source_state,
                    int target_state) const;
 
   // Given num_parity_bits() received bits, compute and returns path
   // metric and its corresponding previous state.
-  std::pair<int, int> PathMetric(const std::string& bits,
+  std::pair<int, int> PathMetric(const bitarr_t& bits,
                                  const std::vector<int>& prev_path_metrics,
                                  int state) const;
 
   // Given num_parity_bits() received bits, update path metrics of all states
   // in the current iteration, and append new traceback vector to trellis.
-  void UpdatePathMetrics(const std::string& bits,
+  void UpdatePathMetrics(const bitarr_t& bits,
                          std::vector<int>* path_metrics,
                          Trellis* trellis) const;
 
@@ -85,11 +84,7 @@ class ViterbiCodec {
   // convenience, e.g. "10". For example, suppose the shift register contains
   // 0b10 (= 2), and the current input is 0b1 (= 1), then the index is 0b110 (=
   // 6).
-  std::vector<std::string> outputs_;
+  std::vector<bitarr_t> outputs_;
 };
 
-std::ostream& operator <<(std::ostream& os, const ViterbiCodec& codec);
-
 int ReverseBits(int num_bits, int input);
-
-#endif  // VITERBI_H_
